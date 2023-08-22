@@ -81,7 +81,7 @@ sites <- data.frame(
 )
 ```
 
-## Full join: 
+## Full join:
 
 Uses full_join()
 
