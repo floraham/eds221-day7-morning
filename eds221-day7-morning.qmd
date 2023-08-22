@@ -4,23 +4,95 @@ format: html
 editor: visual
 ---
 
-## Quarto
-
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
-
-## Running Code
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
-
 ```{r}
-1 + 1
+library(tidyverse)
+library(palmerpenguins)
+library(lubridate)
+library(dplyr)
+library(datapasta)
 ```
 
-You can add options to executable code like this
+# Data wrangling refresher
+
+1.  starting from penguins, write a single piped sequence in which you:
+    -   only include penguins at Dream and Biscoe islands
+
+    -   Remove the year and sex variables
+
+    -   add a new column body_mass_kg with penguin mass converted from g to kg
+
+    -   Rename the island variable to location
 
 ```{r}
-#| echo: false
-2 * 2
+penguins %>%
+  filter(island %in% c("Dream", "Biscoe")) %>% 
+  select(-year, -sex) %>% 
+  mutate(body_mass_kg = body_mass_g/1000) %>% 
+  dplyr::rename(location = island)
+  
+
+
+
+
+
+
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+# starting from penguins, write a single piped sequence to:
+
+-   limit to Adelie penguins
+
+-   Remove any observations where flipper_length_mm is NA(!is.na()) or drop_na()
+
+-   Group the data by sex
+
+-   Create a summary table that contains the mean, standard deviation, and sample size of flipper lengths for male and female adelie penguins.
+
+```{r}
+
+penguins %>%  
+  filter(species == "Adelie") %>% 
+  drop_na(flipper_length_mm) %>% 
+  group_by(sex) %>%
+  summarize(mean_flip_length = mean(flipper_length_mm, na.rm = TRUE),
+            sd_flip_length = sd(flipper_length_mm, na.rm = TRUE), 
+            sample_size = n())
+
+
+
+```
+
+```{r}
+animals <- data.frame(
+  stringsAsFactors = FALSE,
+          location = c("lagoon", "bluff", "creek", "oaks", "bluff"),
+           species = c("bobcat", "coyote", "fox", "squirrel", "bobcat"),
+          maturity = c("adult", "juvenile", "adult", "juvenile", "adult")
+ )
+```
+
+```{r}
+sites <- data.frame(
+  stringsAsFactors = FALSE,
+          location = c("beach", "lagoon", "bluff", "oaks"),
+    full_site_name = c("Goleta Beach","UCSB Lagoon",
+                       "Ellwood Mesa","Fremont Campground"),
+      jurisdiction = c("SB City", "UCSB", "SB City", "USFS")
+)
+```
+
+## Full join: 
+
+Uses full_join()
+
+```{r}
+full_join_example <- full_join(animals, sites)
+```
+
+```{r}
+left_join_example <- left_join(animals, sites)
+```
+
+```{r}
+full_join_example
+```
